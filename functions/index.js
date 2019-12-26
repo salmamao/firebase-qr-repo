@@ -1,4 +1,4 @@
-//by salma_mao
+             //*********************¨¨¨¨¨¨¨¨¨¨¨by salma_mao¨¨¨¨¨¨¨¨¨¨¨**********************//
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -7,9 +7,9 @@ admin.initializeApp({credential: admin.credential.applicationDefault()});
 db = admin.firestore();
 
 /*
- this function gets list of questions
+  function returns list of questions
 */
-exports.getQuestionslist = functions.https.onRequest((request, response) => {
+exports.getQuestionsList = functions.https.onRequest((request, response) => {
     let results = [];
     db.collection('questions').get()
         .then(questionsSnapchot => {questionsSnapchot.forEach(doc =>  {
@@ -17,14 +17,15 @@ exports.getQuestionslist = functions.https.onRequest((request, response) => {
              question.id = doc.id;
              results.push(question);
           });
-            response.send(results);
+
+        response.send(responseDataSuccess(results));
         }).catch(err => {
-        response.status(404).send(err);
-    });
+            response.send(responseDataFailure());
+        });
 });
 
 /*
- this function validates the answer of a specific question
+  function validates the answer of a specific question
 */
 exports.validateAnswer = functions.https.onRequest((request, response) => {
     let questionId = request.query.id;
@@ -36,14 +37,37 @@ exports.validateAnswer = functions.https.onRequest((request, response) => {
                 throw new Error("Question not found");
             } else {
                 if (questionSnapshot.get('rightAnswer') === answer) {
-                    response.status(200).send(questionSnapshot.rightAnswer);
+                    response.send(responseDataSuccess());
                 } else {
                     throw new Error("It is not the right answer!");
                 }
             }
         })
         .catch(err => {
-            console.log(err);
-            response.send(err).status(400);
+            response.send(responseDataFailure(400, err));
         });
 });
+
+/*
+ data response returned successfully
+*/
+function responseDataSuccess(data = []) {
+    return {
+        'data': data,
+        'result': 'OK',
+        'statusCode': '200',
+        'numberResult': data.length,
+        'message': 'Data returned successfully',
+    };
+}
+
+/*
+ data response returned with failure
+*/
+function responseDataFailure(statusCode = 404, error = "Data not found") {
+    return {
+        'result': 'nOK',
+        'statusCode': statusCode,
+        'message': error,
+    };
+}
