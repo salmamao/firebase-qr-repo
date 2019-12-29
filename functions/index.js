@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 //Handle Cross-origin resource sharing
 const cors = require('cors')({origin: true});
 
-admin.initializeApp({credential: admin.credential.applicationDefault()});
+admin.initializeApp();
 db = admin.firestore();
 
 /*
