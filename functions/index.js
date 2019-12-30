@@ -1,4 +1,4 @@
-             //*********************¨¨¨¨¨¨¨¨¨¨¨by salma_mao¨¨¨¨¨¨¨¨¨¨¨**********************//
+//*********************¨¨¨¨¨¨¨¨¨¨¨by salma_mao¨¨¨¨¨¨¨¨¨¨¨**********************//
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
@@ -35,7 +35,7 @@ exports.getQuestion = functions.https.onRequest((request, response) => {
     return cors(request, response, () => {
         let questionId = request.query.id;
 
-            db.collection('questions').doc(questionId).get().then(questionSnapshot => {
+        db.collection('questions').doc(questionId).get().then(questionSnapshot => {
             if (!questionSnapshot.exists) {
                 response.send(responseDataFailure("Question not found"));
             } else {
